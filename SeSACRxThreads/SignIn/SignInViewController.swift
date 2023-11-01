@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import RxCocoa
+import RxSwift
 
 class SignInViewController: UIViewController {
 
@@ -17,6 +19,11 @@ class SignInViewController: UIViewController {
     
     // 기존 스위치 버튼 만드는 방법
     let test = UISwitch()
+    
+    // 데이터 기반으로 적용 : 이벤트 생성, 전달 <- 이벤트를 처리 할 수는 없음 즉, 이벤트를 받을 수 없음 
+    // 이벤트를 전달과 처리를 같이 하기 위해 Subject 사용
+    let isOn =  BehaviorSubject(value: true)    // Observable.of(true)
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,13 +44,27 @@ class SignInViewController: UIViewController {
             make.leading.equalTo(100)
         }
         
-        // setOn: default로 설정할 수 있는 메서드 ex) 스위치 ON인 상태로 하고싶음
-        test.setOn(true, animated: false)
+        isOn // isOn : Observable 역할
+            .subscribe { value in
+                // 이벤트 처리
+                self.test.setOn(value, animated: false)
+            }
+            .disposed(by: disposeBag)
         
-        // 버튼을 만들지 않고 타이머를 통해 꺼지는것 확인하기 위한 DispatchQueue
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.test.setOn(false, animated: false)
-        }
+                // 버튼을 만들지 않고 타이머를 통해 꺼지는것 확인하기 위한 DispatchQueue
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    
+                    self.isOn.onNext(false) // <- isOn : Observer 역할
+                }
+        
+        
+        // setOn: default로 설정할 수 있는 메서드 ex) 스위치 ON인 상태로 하고싶음
+//        test.setOn(true, animated: false)
+//
+//        // 버튼을 만들지 않고 타이머를 통해 꺼지는것 확인하기 위한 DispatchQueue
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//            self.test.setOn(false, animated: false)
+//        }
     }
     
     @objc func signUpButtonClicked() {
