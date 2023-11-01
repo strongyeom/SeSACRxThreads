@@ -21,13 +21,13 @@ class SignInViewController: UIViewController {
     let test = UISwitch()
     
     // 데이터 기반으로 적용 : 이벤트 생성, 전달 <- 이벤트를 처리 할 수는 없음 즉, 이벤트를 받을 수 없음
-    // 이벤트를 전달과 처리를 같이 하기 위해 Subject 사용
-    let isOn =  BehaviorSubject(value: true)    // Observable.of(true)
+    // ⭐️ 이벤트를 전달과 처리를 같이 하기 위해 Subject 사용 BehaviorSubject: 초기값을 갖고 있음
+    // PublishSubject : isOn.onNext(true) 초기값이 없기 때문에 데이터를 개별로 전달해줘야 한다.
+    let isOn = PublishSubject<Bool>() // BehaviorSubject(value: true)    // Observable.of(true)
     let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.backgroundColor = Color.white
         
         testSwitch()
@@ -44,16 +44,18 @@ class SignInViewController: UIViewController {
             make.leading.equalTo(100)
         }
         
-        isOn // isOn : Observable 역할
-            .subscribe { value in
-                // 이벤트 처리
-                self.test.setOn(value, animated: false)
-            }
-            .disposed(by: disposeBag)
+//        isOn // isOn : Observable 역할
+//            .subscribe { value in
+//                // 이벤트 처리
+//                self.test.setOn(value, animated: false)
+//            }
+//            .disposed(by: disposeBag)
         
         isOn // rx 스러운 코드
             .bind(to: test.rx.isOn)
             .disposed(by: disposeBag)
+        
+        isOn.onNext(true) // 구독으 안했기 때문에 구독 전에 이벤트를 전달해서 받을 수 없음 bind 이후에 이벤트를 전달해야함 
         
         // 버튼을 만들지 않고 타이머를 통해 꺼지는것 확인하기 위한 DispatchQueue
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
