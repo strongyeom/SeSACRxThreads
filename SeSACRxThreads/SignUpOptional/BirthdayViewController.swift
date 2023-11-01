@@ -7,6 +7,8 @@
  
 import UIKit
 import SnapKit
+import RxCocoa
+import RxSwift
 
 class BirthdayViewController: UIViewController {
     
@@ -66,6 +68,18 @@ class BirthdayViewController: UIViewController {
   
     let nextButton = PointButton(title: "가입하기")
     
+    // 데이터 기반으로 생각 해야함 년, 월, 일 , datePicker에 오늘 날짜를 띄어줄지 초기값 설정
+    
+    let birthday: BehaviorSubject<Date> = BehaviorSubject(value: .now)
+    let year =  BehaviorSubject(value: 2023) // Observable.of(2020)
+    let month = BehaviorSubject(value: 12)
+    let day = BehaviorSubject(value: 25)
+    
+    // dispose() vs disposed(by: )의 차이
+    // dispose : 즉시 리소스 정리 -> 구독을 해제 -> 메모리에서 제거 -> 더이상 코드가 동작하지 않는다.
+    // disposed(by: ) : 코드를 계속 활용해야하고 필요한 시점에 정리하는게 필요
+    let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -73,7 +87,55 @@ class BirthdayViewController: UIViewController {
         
         configureLayout()
         
+        bind()
+        
         nextButton.addTarget(self, action: #selector(nextButtonClicked), for: .touchUpInside)
+    }
+    
+    
+    func bind() {
+        // datePicker의 값 rx로 랩핑해서 date 값 가져오기
+        birthDayPicker.rx.date
+             // 가져운 date 값 birthday에 넣기
+            .bind(to: birthday) // 피커 -> birthday -> 가공 -> 년, 월, 일 전달
+            .disposed(by: disposeBag)
+    
+        birthday
+            .subscribe(with: self) { owner, date in
+                // 년, 월 , 일 필터링하기 - Calendar 구조체 사용
+                let component = Calendar.current.dateComponents([.year, .month, .day], from: date)
+                
+                // 주‼️ 직접적으로 넣어주는게 아님!!! 전달 -> 전달 -> 전달 ‼️의
+                owner.year.onNext(component.year!) // year Observer
+                owner.month.onNext(component.month!)
+                owner.day.onNext(component.day!)
+            }
+            .disposed(by: disposeBag)
+        
+        
+        
+        year // year Observable
+            .observe(on: MainScheduler.instance) // ⭐️ MainThread에서 동작할 수 있게끔 넘겨주는 코드
+            .map { "\($0)년" } // Int이기 때문에 형 변환 해야함
+            .subscribe(with: self, onNext: { owner, value in
+                owner.yearLabel.text = value
+            }) // subscribe 가 작동할때 백그라운드에서 동작 할 수도 있음 -> 보라색 에러 발생함
+            .disposed(by: disposeBag)
+        
+        month
+            .observe(on: MainScheduler.instance) // MainThread에서 동작할 수 있게끔 넘겨주는 코드
+            .subscribe(with: self) { owner, value in
+                owner.monthLabel.text = "\(value)월"
+            } // subscribe 가 작동할때 백그라운드에서 동작 할 수도 있음 -> 보라색 에러 발생함
+            .disposed(by: disposeBag)
+        
+        day
+            .map { "\($0)일" }
+            .bind(to: dayLabel.rx.text) // ⭐️ (RxCocoa를 사용한다면) bind: MainThread에서 동작하게끔 내부적으로 구현되어 있음 ‼️ 아닐때도 있음 - 추후
+            .disposed(by: disposeBag)
+        
+        
+        
     }
     
     @objc func nextButtonClicked() {
