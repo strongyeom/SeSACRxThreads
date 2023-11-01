@@ -15,15 +15,35 @@ class SignInViewController: UIViewController {
     let signInButton = PointButton(title: "로그인")
     let signUpButton = UIButton()
     
+    // 기존 스위치 버튼 만드는 방법
+    let test = UISwitch()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = Color.white
         
+        testSwitch()
         configureLayout()
         configure()
         
         signUpButton.addTarget(self, action: #selector(signUpButtonClicked), for: .touchUpInside)
+    }
+    
+    func testSwitch() {
+        view.addSubview(test)
+        test.snp.makeConstraints { make in
+            make.top.equalTo(150)
+            make.leading.equalTo(100)
+        }
+        
+        // setOn: default로 설정할 수 있는 메서드 ex) 스위치 ON인 상태로 하고싶음
+        test.setOn(true, animated: false)
+        
+        // 버튼을 만들지 않고 타이머를 통해 꺼지는것 확인하기 위한 DispatchQueue
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.test.setOn(false, animated: false)
+        }
     }
     
     @objc func signUpButtonClicked() {
