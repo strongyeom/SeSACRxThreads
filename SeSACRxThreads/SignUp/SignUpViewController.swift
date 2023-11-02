@@ -15,8 +15,11 @@ class SignUpViewController: UIViewController {
     let emailTextField = SignTextField(placeholderText: "이메일을 입력해주세요")
     let validationButton = UIButton()
     let nextButton = PointButton(title: "다음")
-    let disposeBag = DisposeBag()
+    let disposeBag = DisposeBag() // deinit 되는 시점에 내부에 dispose()되는 메서드 있음
     
+    deinit {
+        print("deinit - signUp")
+    }
     enum JackError: Error {
         case invalid
     }
@@ -30,18 +33,17 @@ class SignUpViewController: UIViewController {
         configure()
         
         nextButton.addTarget(self, action: #selector(nextButtonClicked), for: .touchUpInside)
-        
-        disposeExample()
+        incrementExample()
+//        disposeExample()
 
     }
     
-    func disposeExample() {
-        // 에러 구문을 타게 하기 위해 BehaviorSubject 으로 변경
-        // -> onCompleted, onDisposed print 찍히기 않음 이유 : 전달과 이벤트를 받을 수 있기 때문에 next만 계속 탐
-        let textArray = BehaviorSubject(value: ["Hue", "Jack", "Koko", "Bran"])
-        //Observable.from(["Hue", "Jack", "Koko", "Bran"])
-        // -> onCompleted, onDisposed print 찍힘 이유: 전달만 하기 때문에 해당 요소를 전달하면 끝남
-        textArray
+    
+    
+    func incrementExample() {
+        let increment = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+        
+        increment
             .subscribe(with: self) { owner, value in
                 print("next - \(value)")
             } onError: { owner, error in
@@ -52,15 +54,42 @@ class SignUpViewController: UIViewController {
                 print("onDisposed")
             }
             .disposed(by: disposeBag)
+    }
+    
+    func disposeExample() {
+        // 에러 구문을 타게 하기 위해 BehaviorSubject 으로 변경
+        // -> onCompleted, onDisposed print 찍히기 않음 이유 : 전달과 이벤트를 받을 수 있기 때문에 next만 계속 탐
+        let textArray = BehaviorSubject(value: ["Hue", "Jack", "Koko", "Bran"])
+        //Observable.from(["Hue", "Jack", "Koko", "Bran"])
+        // -> onCompleted, onDisposed print 찍힘 이유: 전달만 하기 때문에 해당 요소를 전달하면 끝남
+        
+        // 상수로 담는 순간 dispose가 없더라도 컴파일 에러 발새하지 않는다.
+        // 상수로 담으면 필요한 순간에 직접 리소스를 정리 할 수 있음
+        let textArrayValue = textArray
+            .subscribe(with: self) { owner, value in
+                print("next - \(value)")
+            } onError: { owner, error in
+                print("error - \(error)")
+            } onCompleted: { owner in
+                print("onCompleted")
+            } onDisposed: { owner in // 사라지는 타이밍을 보기 찍는 것인 이벤트는 아님
+                print("onDisposed")
+            }
+           
         
         // 이벤트를 받는 것까지 처리하면 onCompleted, onDisposed 실행함
         textArray.onNext(["A", "B", "C"])
         
         textArray.onNext(["D", "E", "F"])
         
-        textArray.onError(JackError.invalid)
+      //  textArray.onError(JackError.invalid)
         
         textArray.onNext(["Z", "ZZ", "ZZZ"])
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            // 필요한 시점에 직접 정리 할 수 있음
+            textArrayValue.dispose()
+        }
 
     }
     

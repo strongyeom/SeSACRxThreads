@@ -24,7 +24,7 @@ class SignInViewController: UIViewController {
     // ⭐️ 이벤트를 전달과 처리를 같이 하기 위해 Subject 사용 BehaviorSubject: 초기값을 갖고 있음
     // PublishSubject : isOn.onNext(true) 초기값이 없기 때문에 데이터를 개별로 전달해줘야 한다.
     let isOn = PublishSubject<Bool>() // BehaviorSubject(value: true)    // Observable.of(true)
-    let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,8 +33,58 @@ class SignInViewController: UIViewController {
         testSwitch()
         configureLayout()
         configure()
-        
+        incrementExample()
         signUpButton.addTarget(self, action: #selector(signUpButtonClicked), for: .touchUpInside)
+    }
+    
+    /*
+     RootVC에 있다면 deinit이 적용하지 않을텐데 어떻게 리소스 정리를 할 수 있을까???
+     이럴때 상수에 담고 dispose()를 직접적으로 정리 해줘야함
+     */
+    
+    func incrementExample() {
+        let increment = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+        
+        increment
+            .subscribe(with: self) { owner, value in
+                print("next - \(value)")
+            } onError: { owner, error in
+                print("error - \(error)")
+            } onCompleted: { owner in
+                print("onCompleted")
+            } onDisposed: { owner in // 사라지는 타이밍을 보기 찍는 것인 이벤트는 아님
+                print("onDisposed")
+            }
+            .disposed(by: disposeBag)
+        // 여러개 있을 경우
+        increment
+            .subscribe(with: self) { owner, value in
+                print("next - \(value)")
+            } onError: { owner, error in
+                print("error - \(error)")
+            } onCompleted: { owner in
+                print("onCompleted")
+            } onDisposed: { owner in // 사라지는 타이밍을 보기 찍는 것인 이벤트는 아님
+                print("onDisposed")
+            }
+            .disposed(by: disposeBag)
+        
+        increment
+            .subscribe(with: self) { owner, value in
+                print("next - \(value)")
+            } onError: { owner, error in
+                print("error - \(error)")
+            } onCompleted: { owner in
+                print("onCompleted")
+            } onDisposed: { owner in // 사라지는 타이밍을 보기 찍는 것인 이벤트는 아님
+                print("onDisposed")
+            }
+            .disposed(by: disposeBag)
+            
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            // 여러개를 한번에 dispose 시키는 방법은 인스턴스를 교체해주면 됨 
+            self.disposeBag = DisposeBag()
+        }
     }
     
     func testSwitch() {
