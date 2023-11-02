@@ -14,11 +14,8 @@ class PhoneViewController: UIViewController {
    
     let phoneTextField = SignTextField(placeholderText: "연락처를 입력해주세요")
     let nextButton = PointButton(title: "다음")
-    
-    // 보여줄때 처음 초기값 보여주게 하기
-    let phone = BehaviorSubject(value: "010")
-    let buttonColor = BehaviorSubject(value: UIColor.red)
-    let buttonEnabled = BehaviorSubject(value: false)
+
+    let viewModel = PhoneViewModel()
     let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -36,74 +33,47 @@ class PhoneViewController: UIViewController {
     func bind() {
         
         // 초기에 false로 버튼 isEnabled 설정하기
-        buttonEnabled
+        viewModel.buttonEnabled
             .bind(to: nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
         
-        buttonColor
+        viewModel.buttonColor
             .bind(to: nextButton.rx.backgroundColor, phoneTextField.rx.tintColor)
             .disposed(by: disposeBag)
         
         // TextField에 borderColor 적용
-        buttonColor
+        viewModel.buttonColor
             .map { $0.cgColor } // cgColor로 변환
             .bind(to: phoneTextField.layer.rx.borderColor)
             .disposed(by: disposeBag)
         
-        
-        phone // 전달하는 목적일때도 있고 처리 할때도 쓰일때가 있기 때문에 Subject로 묶었음
+        viewModel.phone // 전달하는 목적일때도 있고 처리 할때도 쓰일때가 있기 때문에 Subject로 묶었음
             .bind(to: phoneTextField.rx.text)
             .disposed(by: disposeBag)
-        
-        phone
+
+        viewModel.phone
+            .observe(on: MainScheduler.instance)
             .map { $0.count > 10 }
             .subscribe { value in
                 print("=== \(value)")
                 let color = value ? UIColor.blue : UIColor.red
-                self.buttonColor.onNext(color)
-                self.nextButton.isEnabled = value
+                
             //    self.buttonEnabled.onNext(value) // ==  self.buttonEnabled.on(.next(value)) 같음
-                
+                self.viewModel.buttonColor.onNext(color)
+                self.nextButton.isEnabled = value
             }
-            .disposed(by: disposeBag)
-        
-        // 클로저 안에 self 처리 1.
-        phone
-            .map { $0.count > 10 }
-            .withUnretained(self) // 클로저 구문 안에 self를 안적게 도와줌 == [weak self] 대치
-        // withUnretained를 사용하게 되면 매개변수로 (VC, Bool)이 되기 때문에 클로저 구문안에 매개변수로 하나더 생성하기
-            .subscribe { object, value in
-                print("=== \(value)")
-                let color = value ? UIColor.blue : UIColor.red
-                object.buttonColor.onNext(color)
-//                self.nextButton.isEnabled = value
-                object.buttonEnabled.onNext(value) // ==  self.buttonEnabled.on(.next(value)) 같음
-                
-            }
-            .disposed(by: disposeBag)
-        
-        // 클로저 안에 self 처리 2.
-        phone
-            .map { $0.count > 10 }
-            // subscribe(with ~ ) : 내부에 withUnretained 를 적용해줌
-            .subscribe(with: self, onNext: { owner, value in
-          //      print("=== \(value)")
-                let color = value ? UIColor.blue : UIColor.red
-                owner.buttonColor.onNext(color)
-                owner.buttonEnabled.onNext(value) // ==  self.buttonEnabled.on(.next(value)) 같음
-            })
             .disposed(by: disposeBag)
         
         phoneTextField.rx.text.orEmpty
+            .observe(on: MainScheduler.instance)
             .subscribe { value in // value는 단지 TextField에 보여지는 text를 나타냄
                 let result = value.formated(by: "###-####-####")
                 print("result : \(result), value: \(value)")
-                self.phone.onNext(result)
+                self.viewModel.phone.onNext(result)
             }
             .disposed(by: disposeBag)
-        
-        
+  
     }
     
     @objc func nextButtonClicked() {

@@ -16,7 +16,7 @@ class SignInViewController: UIViewController {
     let passwordTextField = SignTextField(placeholderText: "비밀번호를 입력해주세요")
     let signInButton = PointButton(title: "로그인")
     let signUpButton = UIButton()
-    
+    let viewModel = SignInViewModel()
     // 기존 스위치 버튼 만드는 방법
     let test = UISwitch()
     
@@ -38,9 +38,11 @@ class SignInViewController: UIViewController {
         signUpButton.addTarget(self, action: #selector(signUpButtonClicked), for: .touchUpInside)
         //bind()
         aboutCombinLatest()
+        
     }
     
     func aboutCombinLatest() {
+        
         let a = PublishSubject<Int>() // BehaviorSubject(value: 3)
         let b = PublishSubject<String>() // BehaviorSubject(value: "가")
         
