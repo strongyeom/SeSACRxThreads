@@ -30,11 +30,42 @@ class SignInViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = Color.white
         
-        testSwitch()
+//        testSwitch()
+//        incrementExample()
         configureLayout()
         configure()
-        incrementExample()
+        
         signUpButton.addTarget(self, action: #selector(signUpButtonClicked), for: .touchUpInside)
+        bind()
+    }
+    
+    func bind() {
+        let email = emailTextField.rx.text.orEmpty
+        let password = passwordTextField.rx.text.orEmpty
+        
+        // 두 가지를 하나로 연결할때 사용 : combineLatest
+        let validation = Observable.combineLatest(email, password) { emailValue, passwordValue in
+            return emailValue.count > 8 && passwordValue.count >= 6
+        }
+        
+        validation
+            .bind(to: signInButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        validation
+            .subscribe(with: self) { owner, value in
+                owner.signInButton.backgroundColor = value ? UIColor.blue : UIColor.red
+                owner.emailTextField.layer.borderColor = value ? UIColor.blue.cgColor : UIColor.red.cgColor
+                owner.passwordTextField.layer.borderColor = value ? UIColor.blue.cgColor : UIColor.red.cgColor
+            }
+            .disposed(by: disposeBag)
+        
+        signInButton.rx.tap
+            .subscribe(with: self) { owner, value in
+                print("SELECT")
+            }
+            .disposed(by: disposeBag)
+        
     }
     
     /*
