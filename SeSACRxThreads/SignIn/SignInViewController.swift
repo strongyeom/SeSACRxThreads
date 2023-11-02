@@ -55,7 +55,7 @@ class SignInViewController: UIViewController {
             .bind(to: test.rx.isOn)
             .disposed(by: disposeBag)
         
-        isOn.onNext(true) // 구독으 안했기 때문에 구독 전에 이벤트를 전달해서 받을 수 없음 bind 이후에 이벤트를 전달해야함 
+        isOn.onNext(true) // 구독으 안했기 때문에 구독 전에 이벤트를 전달해서 받을 수 없음 bind 이후에 이벤트를 전달해야함
         
         // 버튼을 만들지 않고 타이머를 통해 꺼지는것 확인하기 위한 DispatchQueue
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {

@@ -62,8 +62,8 @@ class PhoneViewController: UIViewController {
                 print("=== \(value)")
                 let color = value ? UIColor.blue : UIColor.red
                 self.buttonColor.onNext(color)
-//                self.nextButton.isEnabled = value
-                self.buttonEnabled.onNext(value) // ==  self.buttonEnabled.on(.next(value)) 같음
+                self.nextButton.isEnabled = value
+            //    self.buttonEnabled.onNext(value) // ==  self.buttonEnabled.on(.next(value)) 같음
                 
             }
             .disposed(by: disposeBag)
@@ -88,7 +88,7 @@ class PhoneViewController: UIViewController {
             .map { $0.count > 10 }
             // subscribe(with ~ ) : 내부에 withUnretained 를 적용해줌
             .subscribe(with: self, onNext: { owner, value in
-                print("=== \(value)")
+          //      print("=== \(value)")
                 let color = value ? UIColor.blue : UIColor.red
                 owner.buttonColor.onNext(color)
                 owner.buttonEnabled.onNext(value) // ==  self.buttonEnabled.on(.next(value)) 같음
@@ -96,8 +96,8 @@ class PhoneViewController: UIViewController {
             .disposed(by: disposeBag)
         
         phoneTextField.rx.text.orEmpty
-            .subscribe { value in
-                let result = value.formated(by: "###-###-####")
+            .subscribe { value in // value는 단지 TextField에 보여지는 text를 나타냄
+                let result = value.formated(by: "###-####-####")
                 print("result : \(result), value: \(value)")
                 self.phone.onNext(result)
             }
