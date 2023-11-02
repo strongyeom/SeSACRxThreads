@@ -35,7 +35,40 @@ class SignUpViewController: UIViewController {
         nextButton.addTarget(self, action: #selector(nextButtonClicked), for: .touchUpInside)
 //        incrementExample()
 //        disposeExample()
-        aboutPublishSubject()
+       // aboutPublishSubject()
+        aboutBehaviorSubject()
+    }
+    
+    // 초기값 설정
+    func aboutBehaviorSubject() {
+        // 구독 전 최신 이벤트만 가져옴 - 가장 마지막에 방출한 값
+        let publish = BehaviorSubject(value: 200)
+        
+        publish.onNext(20)
+        publish.onNext(30)
+        
+        publish
+            .subscribe(with: self) { owner, value in
+                print("PublishSubject - \(value)")
+            } onError: { owner, error in
+                print("PublishSubject error - \(error)")
+            } onCompleted: { owner in
+                print("PublishSubject onCompleted")
+            } onDisposed: { owner in // 사라지는 타이밍을 보기 찍는 것인 이벤트는 아님
+                print("PublishSubject onDisposed")
+            }
+            .disposed(by: disposeBag)
+        
+        publish.onNext(3)
+        publish.onNext(7)
+        publish.onNext(49)
+        
+        publish.onCompleted()
+        
+        // 리소스가 정리가 되면 그 이후에는 이벤트를 받을 수 없음
+        publish.onNext(73)
+        publish.onNext(6)
+        
     }
     
     // 초기값이 없음 즉, 비어있는 배열
@@ -64,7 +97,7 @@ class SignUpViewController: UIViewController {
         
         publish.onCompleted()
         
-        // 리소스가 정리가 되면 그 이후에는 이벤트를 받을 수 없음 
+        // 리소스가 정리가 되면 그 이후에는 이벤트를 받을 수 없음
         publish.onNext(73)
         publish.onNext(6)
         
