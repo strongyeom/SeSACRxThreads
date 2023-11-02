@@ -33,12 +33,42 @@ class SignUpViewController: UIViewController {
         configure()
         
         nextButton.addTarget(self, action: #selector(nextButtonClicked), for: .touchUpInside)
-        incrementExample()
+//        incrementExample()
 //        disposeExample()
-
+        aboutPublishSubject()
     }
     
-    
+    // 초기값이 없음 즉, 비어있는 배열
+    func aboutPublishSubject() {
+        // 구독 이후 시점 후 부터 이벤트를 받아 볼 수 있음
+        let publish = PublishSubject<Int>()
+        
+        publish.onNext(20)
+        publish.onNext(30)
+        
+        publish
+            .subscribe(with: self) { owner, value in
+                print("PublishSubject - \(value)")
+            } onError: { owner, error in
+                print("PublishSubject error - \(error)")
+            } onCompleted: { owner in
+                print("PublishSubject onCompleted")
+            } onDisposed: { owner in // 사라지는 타이밍을 보기 찍는 것인 이벤트는 아님
+                print("PublishSubject onDisposed")
+            }
+            .disposed(by: disposeBag)
+        
+        publish.onNext(3)
+        publish.onNext(7)
+        publish.onNext(49)
+        
+        publish.onCompleted()
+        
+        // 리소스가 정리가 되면 그 이후에는 이벤트를 받을 수 없음 
+        publish.onNext(73)
+        publish.onNext(6)
+        
+    }
     
     func incrementExample() {
         let increment = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
