@@ -36,7 +36,41 @@ class SignUpViewController: UIViewController {
 //        incrementExample()
 //        disposeExample()
        // aboutPublishSubject()
-        aboutBehaviorSubject()
+       //  aboutBehaviorSubject()
+        aboutReplaySubjectSubject()
+    }
+    
+    func aboutReplaySubjectSubject() {
+        // 버퍼 사이즈가 갖고 있음 어떤 이벤트를 가지고 있다가 뿜어줄것이냐 즉, 구독 이전에 몇개를 가지고 있다가 구독 이후에 한번에 내보냄
+        let publish = ReplaySubject<Int>.create(bufferSize: 3)
+        publish.onNext(1)
+        publish.onNext(2)
+        publish.onNext(3)
+        publish.onNext(20)
+        publish.onNext(30)
+        
+        publish
+            .subscribe(with: self) { owner, value in
+                print("PublishSubject - \(value)")
+            } onError: { owner, error in
+                print("PublishSubject error - \(error)")
+            } onCompleted: { owner in
+                print("PublishSubject onCompleted")
+            } onDisposed: { owner in // 사라지는 타이밍을 보기 찍는 것인 이벤트는 아님
+                print("PublishSubject onDisposed")
+            }
+            .disposed(by: disposeBag)
+        
+        publish.onNext(3)
+        publish.onNext(7)
+        publish.onNext(49)
+        
+        publish.onCompleted()
+        
+        // 리소스가 정리가 되면 그 이후에는 이벤트를 받을 수 없음
+        publish.onNext(73)
+        publish.onNext(6)
+        
     }
     
     // 초기값 설정
