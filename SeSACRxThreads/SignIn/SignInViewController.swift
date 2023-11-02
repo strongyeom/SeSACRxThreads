@@ -36,7 +36,29 @@ class SignInViewController: UIViewController {
         configure()
         
         signUpButton.addTarget(self, action: #selector(signUpButtonClicked), for: .touchUpInside)
-        bind()
+        //bind()
+        aboutCombinLatest()
+    }
+    
+    func aboutCombinLatest() {
+        let a = PublishSubject<Int>() // BehaviorSubject(value: 3)
+        let b = PublishSubject<String>() // BehaviorSubject(value: "가")
+        
+        // ⭐️ combineLatest: 전달하려고 하는 next 이벤트가 한번이라도 방출이 되어야 결합을 할 수 있음 만약 둘 중 하나라도 없으면 실행되지 않음
+        Observable.combineLatest(a, b) { first, second in
+            return "결과: \(first) 그리고 \(second)"
+        }
+        .subscribe(with: self) { owner, value in
+            print(value)
+        }
+        .disposed(by: disposeBag)
+        
+        a.onNext(2)
+        a.onNext(8)
+        a.onNext(5)
+        
+//        b.onNext("나")
+        b.onNext("다")
     }
     
     func bind() {
