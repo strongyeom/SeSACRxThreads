@@ -44,7 +44,7 @@ class SignInViewController: UIViewController {
         let a = PublishSubject<Int>() // BehaviorSubject(value: 3)
         let b = PublishSubject<String>() // BehaviorSubject(value: "가")
         
-        // ⭐️ combineLatest: 전달하려고 하는 next 이벤트가 한번이라도 방출이 되어야 결합을 할 수 있음 만약 둘 중 하나라도 없으면 실행되지 않음
+        // ⭐️ combineLatest: 전달하려고 하는 next 이벤트가 한번이라도 방출이 되어야 결합을 할 수 있음 만약 둘 중 하나라도 없으면 실행되지 않음  vs zip
         Observable.combineLatest(a, b) { first, second in
             return "결과: \(first) 그리고 \(second)"
         }
