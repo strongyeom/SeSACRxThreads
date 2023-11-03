@@ -10,13 +10,21 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
+class SampleViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .lightGray
+        title = "\(Int.random(in: 1...100))"
+    }
+}
+
 class SearchViewController: UIViewController {
      
     private let tableView: UITableView = {
        let view = UITableView()
         view.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.identifier)
         view.backgroundColor = .white
-        view.rowHeight = 80
+        view.rowHeight = 180
         view.separatorStyle = .none
        return view
      }()
@@ -46,6 +54,16 @@ class SearchViewController: UIViewController {
             .bind(to: tableView.rx.items(cellIdentifier: SearchTableViewCell.identifier, cellType: SearchTableViewCell.self)) { (row, element, cell) in
                 cell.appNameLabel.text = element
                 cell.appIconImageView.backgroundColor = .green
+                // Cell 안에서 rx버튼 클릭을 만들어주면 재사용 메커니즘 때문에서 스크롤하고  한번 클릭을해도 여러번 클릭됨...
+               // cell.bind()
+                
+                // cell 버튼 시 화면전환 코드 - 중첩됨...
+                // prepareForReuse...
+                cell.downloadButton.rx.tap
+                    .subscribe(with: self) { owner, _ in
+                        owner.navigationController?.pushViewController(SampleViewController(), animated: true)
+                    }
+                    .disposed(by: cell.disposeBag)
             }
             .disposed(by: disposeBag)
         

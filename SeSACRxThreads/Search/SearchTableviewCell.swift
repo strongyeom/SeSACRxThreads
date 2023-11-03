@@ -6,10 +6,13 @@
 
 import UIKit
 import SnapKit
+import RxCocoa
+import RxSwift
 
 final class SearchTableViewCell: UITableViewCell {
     
     static let identifier = "SearchTableViewCell"
+   
     
     let appNameLabel: UILabel = {
         let label = UILabel()
@@ -36,13 +39,16 @@ final class SearchTableViewCell: UITableViewCell {
         return button
     }()
     
+    var disposeBag = DisposeBag()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         self.selectionStyle = .none
         configure()
+        
     }
-    
+  
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -70,5 +76,11 @@ final class SearchTableViewCell: UITableViewCell {
             $0.height.equalTo(32)
             $0.width.equalTo(72)
         }
+    }
+    
+    // ⭐️ Cell 초기화
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
     }
 }
