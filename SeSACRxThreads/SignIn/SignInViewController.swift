@@ -36,8 +36,8 @@ class SignInViewController: UIViewController {
         configure()
         
         signUpButton.addTarget(self, action: #selector(signUpButtonClicked), for: .touchUpInside)
-        //bind()
-        aboutCombinLatest()
+        bind()
+        //aboutCombinLatest()
         
     }
     
@@ -86,7 +86,8 @@ class SignInViewController: UIViewController {
         
         signInButton.rx.tap
             .subscribe(with: self) { owner, value in
-                print("SELECT")
+                // 화면 전환 코드 작성
+                owner.navigationController?.pushViewController(SearchViewController(), animated: true)
             }
             .disposed(by: disposeBag)
         

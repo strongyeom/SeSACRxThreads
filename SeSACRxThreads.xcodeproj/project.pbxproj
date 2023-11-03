@@ -29,6 +29,8 @@
 		041280732AEFAD4B00972552 /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041280722AEFAD4B00972552 /* NicknameViewController.swift */; };
 		041280782AF1D14000972552 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041280772AF1D14000972552 /* Resource.swift */; };
 		262BBE5F2AF3772E00F98BF8 /* BirthdayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262BBE5E2AF3772E00F98BF8 /* BirthdayViewModel.swift */; };
+		26EC4E442AF47BA10024C22F /* SearchTableviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26EC4E432AF47BA10024C22F /* SearchTableviewCell.swift */; };
+		26EC4E462AF47BB80024C22F /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26EC4E452AF47BB80024C22F /* SearchViewController.swift */; };
 		26F62BBD2AF3F0E4002D10D5 /* PhoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26F62BBC2AF3F0E4002D10D5 /* PhoneViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -73,6 +75,8 @@
 		041280722AEFAD4B00972552 /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
 		041280772AF1D14000972552 /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		262BBE5E2AF3772E00F98BF8 /* BirthdayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdayViewModel.swift; sourceTree = "<group>"; };
+		26EC4E432AF47BA10024C22F /* SearchTableviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableviewCell.swift; sourceTree = "<group>"; };
+		26EC4E452AF47BB80024C22F /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		26F62BBC2AF3F0E4002D10D5 /* PhoneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -127,6 +131,7 @@
 		041280222AEF9BAB00972552 /* SeSACRxThreads */ = {
 			isa = PBXGroup;
 			children = (
+				26EC4E422AF47B900024C22F /* Search */,
 				041280532AEF9C1F00972552 /* SignUp */,
 				041280542AEF9C2600972552 /* SignIn */,
 				0412806D2AEFAD0F00972552 /* SignUpOptional */,
@@ -196,6 +201,15 @@
 				26F62BBC2AF3F0E4002D10D5 /* PhoneViewModel.swift */,
 			);
 			path = SignUpOptional;
+			sourceTree = "<group>";
+		};
+		26EC4E422AF47B900024C22F /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				26EC4E432AF47BA10024C22F /* SearchTableviewCell.swift */,
+				26EC4E452AF47BB80024C22F /* SearchViewController.swift */,
+			);
+			path = Search;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -340,6 +354,7 @@
 				041280782AF1D14000972552 /* Resource.swift in Sources */,
 				0412806F2AEFAD2D00972552 /* BirthdayViewController.swift in Sources */,
 				041280652AEFA2F000972552 /* SignTextField.swift in Sources */,
+				26EC4E462AF47BB80024C22F /* SearchViewController.swift in Sources */,
 				0412806C2AEFABFE00972552 /* PasswordViewController.swift in Sources */,
 				041280562AEFA04800972552 /* SignInViewController.swift in Sources */,
 				262BBE5F2AF3772E00F98BF8 /* BirthdayViewModel.swift in Sources */,
@@ -350,6 +365,7 @@
 				0412806A2AEFA91E00972552 /* SignUpViewController.swift in Sources */,
 				041280712AEFAD3D00972552 /* PhoneViewController.swift in Sources */,
 				26F62BBD2AF3F0E4002D10D5 /* PhoneViewModel.swift in Sources */,
+				26EC4E442AF47BA10024C22F /* SearchTableviewCell.swift in Sources */,
 				041280262AEF9BAB00972552 /* SceneDelegate.swift in Sources */,
 				041280582AEFA05300972552 /* SignInViewModel.swift in Sources */,
 			);
