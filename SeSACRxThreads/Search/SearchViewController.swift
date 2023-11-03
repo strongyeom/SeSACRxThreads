@@ -23,7 +23,7 @@ class SearchViewController: UIViewController {
     
     let searchBar = UISearchBar()
     
-    var data = ["A", "B", "C"]
+    var data = ["A", "B", "C", "AB", "D", "ABC"]
     
     lazy var items = BehaviorSubject(value: data)
     
@@ -108,11 +108,26 @@ class SearchViewController: UIViewController {
 //            }
             .disposed(by: disposeBag)
 //
-//        searchBar.rx.text.orEmpty
-//            .subscribe(with: self) { owner, value in
-//                print("SearchBar Text : \(value)")
-//            }
-//            .disposed(by: disposeBag)
+        
+        // 검색어 기반으로 데이터를 찾고 싶을때
+        searchBar.rx.text.orEmpty
+            // 사용자가 엄청 빨리 입력하게 되면 서버통신 계속 하게 됨... 콜수 어떻게 감당 할 건데??
+            // text입력하는것을 끝났을때! 그때만 통신하기
+            // debounce - RxTimeInterval.seconds(1) : 1초 동안 기다렸다가 실행 vs Throttle (쓰로틀)
+            .debounce(RxTimeInterval.seconds(1), scheduler: MainScheduler.instance)
+            // distinctUntilChanged: 검색어가 중복으로 올 경우 중복된 값 무시
+            .distinctUntilChanged()
+            .subscribe(with: self) { owner, value in
+                print("실시간 검색 -- SearchBar Text : \(value)")
+                // value: nil 이 아니고 빈 문자열이기 때문에 화면에 들어오면 바로 searchBar.rx.text.orEmpty 탐
+                // filtering
+                let result = value == "" ? owner.data : owner.data.filter { $0.contains(value) }
+                owner.items.onNext(result)
+                
+     
+                
+            }
+            .disposed(by: disposeBag)
 //
     }
     
