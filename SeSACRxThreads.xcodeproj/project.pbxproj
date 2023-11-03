@@ -185,7 +185,6 @@
 		041280612AEFA0BE00972552 /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
-				041280622AEFA0CE00972552 /* PointButton.swift */,
 				041280642AEFA2F000972552 /* SignTextField.swift */,
 			);
 			path = CustomView;
@@ -195,6 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				0412806E2AEFAD2D00972552 /* BirthdayViewController.swift */,
+				041280622AEFA0CE00972552 /* PointButton.swift */,
 				041280702AEFAD3D00972552 /* PhoneViewController.swift */,
 				041280722AEFAD4B00972552 /* NicknameViewController.swift */,
 				262BBE5E2AF3772E00F98BF8 /* BirthdayViewModel.swift */,
