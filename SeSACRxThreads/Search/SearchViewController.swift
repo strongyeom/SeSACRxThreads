@@ -33,6 +33,7 @@ class SearchViewController: UIViewController {
         view.backgroundColor = .white
         configure()
         bind()
+        setSearchController()
         
     }
      
@@ -64,18 +65,48 @@ class SearchViewController: UIViewController {
         // => 두개 다 써야 하나? 너무 낭비 같은데.... ⭐️ zip
         Observable.zip(tableView.rx.itemSelected, tableView.rx.modelSelected(String.self))
             .map { "쎌 선택 \($0) \($1)"}
-            .bind(to: navigationItem.rx.title)
-//            .subscribe(with: self) { owner, value in
-//                print(value)
-//            }
+            //.bind(to: navigationItem.rx.title)
+            .subscribe(with: self) { owner, value in
+                print(value)
+            }
             .disposed(by: disposeBag)
         
-        // combind vs zip
-        
         /*
+         combind vs zip
          combindLatest : 셋중에 하나만 이벤트가 변경이 되어도 이벤트 탐
          zip: 동시에 짝꿍이 맞아야 이벤트 탐
          */
+        
+        
+        // 1. SearchBar text를 배열에 추가. return 키를 클릭했을때
+        // 2. text 옵셔널 바인딩 처리 -> 배열에 추가 append -> reloadData
+        // 3. SearchBarDelegate searchButtonClicked
+        
+        searchBar.rx
+            .searchButtonClicked // return Void
+        // withLatestFrom : 기존 (현재 버튼의 Void )과 가지고 오고 싶어하는 타입(TextField의 String)을 결합했을때 사용
+            .withLatestFrom(searchBar.rx.text.orEmpty, resultSelector: { void, text in
+                return text
+            })
+            .subscribe(with: self, onNext: { owner, text in
+                print(text)
+            })
+//            .subscribe(with: self) { owner, _ in
+//                // searchbar의 text를 바로 갖고오고 싶을때는? searchButtonClicked의 return 타입 void 인데 어떻게 가져 올 수 있을까?
+////                // 1.
+////                print(owner.searchBar.text!)
+////
+//                // 2.
+//                print("Selected Search Return Button")
+//            }
+            .disposed(by: disposeBag)
+//
+//        searchBar.rx.text.orEmpty
+//            .subscribe(with: self) { owner, value in
+//                print("SearchBar Text : \(value)")
+//            }
+//            .disposed(by: disposeBag)
+//
     }
     
     private func setSearchController() {
