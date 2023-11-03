@@ -22,8 +22,11 @@ class SearchViewController: UIViewController {
      }()
     
     let searchBar = UISearchBar()
-     
-    var items = BehaviorSubject(value: Array(100...150).map { "안녕하세요 \($0)"})
+    
+    var data = ["A", "B", "C"]
+    
+    lazy var items = BehaviorSubject(value: data)
+    
     
     let disposeBag = DisposeBag()
     
@@ -90,6 +93,10 @@ class SearchViewController: UIViewController {
             })
             .subscribe(with: self, onNext: { owner, text in
                 print(text)
+                // 배열에 append 하는 방법 data로 배열을 뺀 이유 : 안빼고 처리하면 try! 구문을 써야함
+                // try! items.value().append(text)
+                owner.data.insert(text, at: 0)
+                owner.items.onNext(owner.data)
             })
 //            .subscribe(with: self) { owner, _ in
 //                // searchbar의 text를 바로 갖고오고 싶을때는? searchButtonClicked의 return 타입 void 인데 어떻게 가져 올 수 있을까?
