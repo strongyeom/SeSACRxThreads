@@ -64,9 +64,10 @@ class SearchViewController: UIViewController {
         // => 두개 다 써야 하나? 너무 낭비 같은데.... ⭐️ zip
         Observable.zip(tableView.rx.itemSelected, tableView.rx.modelSelected(String.self))
             .map { "쎌 선택 \($0) \($1)"}
-            .subscribe(with: self) { owner, value in
-                print(value)
-            }
+            .bind(to: navigationItem.rx.title)
+//            .subscribe(with: self) { owner, value in
+//                print(value)
+//            }
             .disposed(by: disposeBag)
         
         // combind vs zip
