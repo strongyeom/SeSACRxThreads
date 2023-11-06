@@ -26,6 +26,38 @@ class PasswordViewController: UIViewController {
         nextButton.addTarget(self, action: #selector(nextButtonClicked), for: .touchUpInside)
         aboutUnicast()
         aboutMuticast()
+        requestExample()
+    }
+    
+    func requestExample() {
+        let request = BasicAPIManager.fetchData()
+        
+        // Observable<SearchAppModel>을 리턴하기 때문에 유니 캐스트 -> Observer의 갯수만큼 콜을 함...
+        // 쓸데 없이 콜수가 많이 일어남 
+        
+        // 데이터 통신한 Observable을 사용해서
+        
+        // 1. TableView에 보여줄 수 있고
+        request
+            .subscribe(with: self) { owner, value in
+                dump(value)
+            }
+            .disposed(by: disposeBag)
+        
+        // 2. DB에 저장할 수있고
+        request
+            .subscribe(with: self) { owner, value in
+                print("데이터 통신 갯수 - \(value.results.count)")
+            }
+            .disposed(by: disposeBag)
+        
+        // 3. UI에 보여줄 수 있음
+        request
+            .map { data in
+                "\(data.results.count)개의 검색 결과"
+            }
+            .bind(to: navigationItem.rx.title)
+            .disposed(by: disposeBag)
     }
     
     
