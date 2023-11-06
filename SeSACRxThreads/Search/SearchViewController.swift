@@ -69,11 +69,11 @@ class SearchViewController: UIViewController {
         
         // 에러 발생 - 백그라운드에서 돌아감, 네트워크 통신 2번됨 ...
         
-        // 1. subscribe: share . observerOn
-        // 2. bind : share
+        // 1. subscribe: .share,  .observerOn(MainThread.instance)사용
+        // 2. bind : .share
         // 3. drive :
         let request = BasicAPIManager
-            .fetchData()
+            .fetchData() // return 타입이  Observable<SearchAppModel> 임
             .asDriver(onErrorJustReturn: SearchAppModel(resultCount: 0, results: []))
         
         request
@@ -119,7 +119,7 @@ class SearchViewController: UIViewController {
         
         /*
          combind vs zip
-         combindLatest : 셋중에 하나만 이벤트가 변경이 되어도 이벤트 탐
+         combindLatest : 둘중에 하나만 이벤트가 변경이 되어도 이벤트 탐
          zip: 동시에 짝꿍이 맞아야 이벤트 탐
          */
         
@@ -156,7 +156,7 @@ class SearchViewController: UIViewController {
 //        searchBar.rx.text.orEmpty
 //            // 사용자가 엄청 빨리 입력하게 되면 서버통신 계속 하게 됨... 콜수 어떻게 감당 할 건데??
 //            // text입력하는것을 끝났을때! 그때만 통신하기
-//            // debounce - RxTimeInterval.seconds(1) : 1초 동안 기다렸다가 실행 vs Throttle (쓰로틀)
+//            // debounce - RxTimeInterval.seconds(1) : 1초 동안 기다렸다가 마지막 이벤트 실행 vs Throttle (쓰로틀) : 시간 설정한 기간동안 이벤트를 받지 않고 설정한 시간이 끝나는 시점의 이벤트 가져옴
 //            .debounce(RxTimeInterval.seconds(1), scheduler: MainScheduler.instance)
 //            // distinctUntilChanged: 검색어가 중복으로 올 경우 중복된 값 무시
 //            .distinctUntilChanged()

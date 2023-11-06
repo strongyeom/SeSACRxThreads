@@ -26,7 +26,7 @@ class PasswordViewController: UIViewController {
         nextButton.addTarget(self, action: #selector(nextButtonClicked), for: .touchUpInside)
         aboutUnicast()
         aboutMuticast()
-        requestExample()
+       // requestExample()
     }
     
     func requestExample() {
@@ -66,10 +66,13 @@ class PasswordViewController: UIViewController {
         
         // create : Observable 클래스를 만들고자 할때
         
-       let random = Observable.create { value in
-            value.onNext(Int.random(in: 1...100))
+       let random =
+        //Observable.just([1, 2, 3, 4, 5].shuffled())
+        Observable<[Int]>.create { value in
+            // create : <>안에 있는 타입으로 Observable을 만들어줌 
+            value.onNext([1, 2, 3, 4, 5].shuffled())
             return Disposables.create()
-        } // create가 observer 갯수만큼 실행 
+        } // create가 observer 갯수만큼 실행
         
         random
             .subscribe(with: self) { owner, value in
