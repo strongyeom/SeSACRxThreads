@@ -32,7 +32,7 @@ class SearchViewController: UIViewController {
     let searchBar = UISearchBar()
     
     var data = ["A", "B", "C", "AB", "D", "ABC"]
-    
+
     lazy var items = BehaviorSubject(value: data)
     
     

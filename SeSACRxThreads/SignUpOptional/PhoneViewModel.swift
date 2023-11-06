@@ -13,7 +13,6 @@ class PhoneViewModel {
     let phone = BehaviorSubject(value: "010")
     let buttonEnabled = BehaviorSubject(value: false)
     let buttonColor = BehaviorSubject(value: UIColor.red)
-    
     let disposeBag = DisposeBag()
     
     init() {
