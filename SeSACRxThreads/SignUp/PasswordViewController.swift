@@ -30,11 +30,13 @@ class PasswordViewController: UIViewController {
     }
     
     func requestExample() {
-        let request = BasicAPIManager.fetchData()
-        
         // Observable<SearchAppModel>을 리턴하기 때문에 유니 캐스트 -> Observer의 갯수만큼 콜을 함...
-        // 쓸데 없이 콜수가 많이 일어남 
+        // 쓸데 없이 콜수가 많이 일어남 한번의 네트워크 통신으로 다른 Observer에 뿌려주는 방법은 없을까?
         
+        // ⭐️ share(): 대표적인 기능 - 유니캐스트 -> 멀티캐스트로 바꿔줌
+        let request = BasicAPIManager.fetchData().share()
+        
+      
         // 데이터 통신한 Observable을 사용해서
         
         // 1. TableView에 보여줄 수 있고
