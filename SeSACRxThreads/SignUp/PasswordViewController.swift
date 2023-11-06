@@ -38,7 +38,6 @@ class PasswordViewController: UIViewController {
         
       
         // 데이터 통신한 Observable을 사용해서
-        
         // 1. TableView에 보여줄 수 있고
         request
             .subscribe(with: self) { owner, value in
